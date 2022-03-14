@@ -72,6 +72,7 @@ oc create -f BancoDados-Service.yml
 
 # criar a aplicação
 oc create -f ApiProdutos-Deployment.yml
+oc create -f ApiProdutos-Hpa.yml
 oc create -f ApiProdutos-Service.yml
 oc create -f ApiProdutos-Route.yml
 ```
