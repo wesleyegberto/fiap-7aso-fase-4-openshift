@@ -1,0 +1,37 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: banco-dados
+  namespace: entrega
+  labels:
+    app: banco-dados
+    # cria grupo na topologia
+    app.kubernetes.io/part-of: produtos
+spec:
+  containers:
+    - image: mysql
+      name: banco-dados
+      env:
+        - name: MYSQL_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: banco-dados-acessos
+              key: mysql.root_password
+        - name: MYSQL_USER
+          valueFrom:
+            secretKeyRef:
+              name: banco-dados-acessos
+              key: mysql.user
+        - name: MYSQL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: banco-dados-acessos
+              key: mysql.password
+        - name: MYSQL_DATABASE
+          valueFrom:
+            secretKeyRef:
+              name: banco-dados-acessos
+              key: mysql.database
+      resources:
+        limits:
+          cpu: 1

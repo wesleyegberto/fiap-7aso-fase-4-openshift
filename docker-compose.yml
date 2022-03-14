@@ -1,0 +1,32 @@
+version: "3.4"
+
+services:
+  mysql:
+    image: mysql
+    networks:
+    - fiap-net
+    ports:
+      - 3306:3306
+    environment:
+      - "MYSQL_ROOT_PASSWORD=root"
+      - "MYSQL_USER=fiap"
+      - "MYSQL_PASSWORD=fiap"
+      - "MYSQL_DATABASE=produtos"
+
+  api-produtos:
+    build: ./
+    networks:
+      - fiap-net
+    ports:
+      - 8080:8080
+    environment:
+      MYSQL_HOST: mysql
+      MYSQL_USERNAME: fiap
+      MYSQL_PASSWORD: fiap
+      MYSQL_DATABASE: produtos
+    depends_on:
+      - mysql
+
+networks:
+  fiap-net:
+    driver: bridge

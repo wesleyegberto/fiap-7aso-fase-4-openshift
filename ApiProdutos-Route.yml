@@ -1,0 +1,13 @@
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: api-produtos
+  namespace: entrega
+  metadata:
+    name: api-produtos
+spec:
+  to:
+    kind: Service
+    name: api-produtos
+  port:
+    targetPort: 8080
