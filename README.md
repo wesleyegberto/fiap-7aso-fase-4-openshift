@@ -67,7 +67,8 @@ Rodar os comandos:
 oc create -f BancoDados-Secret.yml
 
 # criar o banco de dados MySQL
-oc create -f BancoDados-Pod.yml
+oc create -f BancoDados-Pvc.yml
+oc create -f BancoDados-Deployment.yml
 oc create -f BancoDados-Service.yml
 
 # criar a aplicação

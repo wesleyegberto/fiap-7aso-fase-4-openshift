@@ -1,0 +1,43 @@
+name: Deploy Resources
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    ref: main
+
+env:
+  OPENSHIFT_TOKEN: ${{ secrets.OPENSHIFT_TOKEN }}
+  OPENSHIFT_SERVER_URL: ${{ secrets.OPENSHIFT_SERVER_URL }}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: OpenShift Setup
+        uses: redhat-actions/oc-installer@v1
+        with:
+          oc_version: '4.6'
+
+      - name: OpenShift Auth
+        run: |
+          oc login --token=${{ env.OPENSHIFT_TOKEN }} --server=${{ env.OPENSHIFT_SERVER_URL }}
+          oc project entrega
+
+      - name: Secrets
+        run: oc apply -f BancoDados-Secret.yml
+
+      - name: Database
+        run: |
+          oc create -f BancoDados-Pvc.yml
+          oc create -f BancoDados-Deployment.yml
+          oc create -f BancoDados-Service.yml
+
+      - name: Application
+        run: |
+          oc create -f ApiProdutos-Deployment.yml
+          oc create -f ApiProdutos-Hpa.yml
+          oc create -f ApiProdutos-Service.yml
+          oc create -f ApiProdutos-Route.yml

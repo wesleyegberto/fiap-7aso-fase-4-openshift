@@ -20,10 +20,10 @@ services:
     ports:
       - 8080:8080
     environment:
-      MYSQL_HOST: mysql
-      MYSQL_USERNAME: fiap
-      MYSQL_PASSWORD: fiap
-      MYSQL_DATABASE: produtos
+      - "MYSQL_HOST=mysql"
+      - "MYSQL_USERNAME=fiap"
+      - "MYSQL_PASSWORD=fiap"
+      - "MYSQL_DATABASE=produtos"
     depends_on:
       - mysql
 

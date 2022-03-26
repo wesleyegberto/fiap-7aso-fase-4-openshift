@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: banco-dados
+  namespace: entrega
+  labels:
+    app: banco-dados
+    # cria grupo na topologia
+    app.kubernetes.io/part-of: produtos
+spec:
+  selector:
+    matchLabels:
+      app: banco-dados
+  template:
+    metadata:
+      labels:
+        app: banco-dados
+    spec:
+      containers:
+        - image: registry.redhat.io/rhscl/mysql-57-rhel7
+        # - image: mysql
+          name: banco-dados
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: banco-dados-acessos
+                  key: mysql.root_password
+            - name: MYSQL_USER
+              valueFrom:
+                secretKeyRef:
+                  name: banco-dados-acessos
+                  key: mysql.user
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: banco-dados-acessos
+                  key: mysql.password
+            - name: MYSQL_DATABASE
+              valueFrom:
+                secretKeyRef:
+                  name: banco-dados-acessos
+                  key: mysql.database
+          resources:
+            limits:
+              cpu: 1
+          volumeMounts:
+            - name: database-disc
+              mountPath: /var/lib/mysql
+      volumes:
+        - name: database-disc
+          persistentVolumeClaim:
+            claimName: banco-dados

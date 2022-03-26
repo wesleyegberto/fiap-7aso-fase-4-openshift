@@ -1,4 +1,4 @@
-name: Deploy to OpenShift
+name: Build and Deploy Application
 
 on:
   push:
@@ -47,7 +47,7 @@ jobs:
       - name: Docker Push
         run: docker push fiap/fiap-api-produtos:${{ env.RELEASE_VERSION }} quay.io/${{ env.QUAY_USERNAME }}/fiap-api-produtos:${{ env.RELEASE_VERSION }}
 
-      - name: 'Update deployment file'
+      - name: Update deployment file
         run: |-
           sed -i 's|image: .*|image: quay.io/${{ env.QUAY_USERNAME }}/fiap-api-produtos:${{ env.RELEASE_VERSION }}|' ApiProdutos-Deployment.yml
 

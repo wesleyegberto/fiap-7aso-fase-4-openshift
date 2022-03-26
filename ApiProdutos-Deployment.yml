@@ -9,7 +9,7 @@ metadata:
     app.kubernetes.io/part-of: produtos
   annotations:
     # cria conexão na topologia
-    app.openshift.io/connects-to: '[{"apiVersion":"v1","kind":"Pod","name":"banco-dados"}]'
+    app.openshift.io/connects-to: '[{"apiVersion":"apps/v1","kind":"Deployment","name":"banco-dados"}]'
 spec:
   selector:
     matchLabels:
@@ -21,6 +21,7 @@ spec:
     spec:
       containers:
         - image: quay.io/wesleyegberto/fiap-api-produtos:1
+          imagePullPolicy: Always
           name: api-produtos
           env:
             - name: MYSQL_HOST
