@@ -15,7 +15,7 @@ env:
   OPENSHIFT_SERVER_URL: ${{ secrets.OPENSHIFT_SERVER_URL }}
   QUAY_USERNAME: ${{ secrets.QUAY_USERNAME }}
   QUAY_TOKEN: ${{ secrets.QUAY_TOKEN }}
-  RELEASE_VERSION: ${{ github.event.inputs.version || env.GITHUB_SHA }}
+  RELEASE_VERSION: ${{ github.event.inputs.version || github.sha }}
 
 jobs:
   deploy:
