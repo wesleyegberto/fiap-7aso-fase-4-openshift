@@ -1,0 +1,62 @@
+name: Deploy to OpenShift
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    ref: main
+    inputs:
+      version:
+        description: 'Versão'
+        required: true
+
+env:
+  OPENSHIFT_TOKEN: ${{ secrets.OPENSHIFT_TOKEN }}
+  OPENSHIFT_SERVER_URL: ${{ secrets.OPENSHIFT_SERVER_URL }}
+  QUAY_USERNAME: ${{ secrets.QUAY_USERNAME }}
+  QUAY_TOKEN: ${{ secrets.QUAY_TOKEN }}
+  RELEASE_VERSION: ${{ github.event.inputs.version || env.GITHUB_SHA }}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Git Init
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email noreply@github.com
+
+      - name: OpenShift Setup
+        uses: redhat-actions/oc-installer@v1
+        with:
+          oc_version: '4.6'
+
+      - name: OpenShift Auth
+        run: |
+          oc login --token=${{ env.OPENSHIFT_TOKEN }} --server=${{ env.OPENSHIFT_SERVER_URL }}
+          oc project entrega
+
+      - name: Docker Quay.io Auth
+        run: echo ${{ env.QUAY_TOKEN }} | docker login -u ${{ env.QUAY_USERNAME }} --password-stdin quay.io
+
+      - name: Docker Build
+        run: docker build -t fiap/fiap-api-produtos:${{ env.RELEASE_VERSION }} .
+
+      - name: Docker Push
+        run: docker push fiap/fiap-api-produtos:${{ env.RELEASE_VERSION }} quay.io/${{ env.QUAY_USERNAME }}/fiap-api-produtos:${{ env.RELEASE_VERSION }}
+
+      - name: 'Update deployment file'
+        run: |-
+          sed -i 's|image: .*|image: quay.io/${{ env.QUAY_USERNAME }}/fiap-api-produtos:${{ env.RELEASE_VERSION }}|' ApiProdutos-Deployment.yml
+
+      - name: Commit deployment file
+        id: make-commit
+        run: |
+          git add ApiProdutos-Deployment.yml
+          git commit --message "Release ${{ env.RELEASE_VERSION }}"
+          echo "::set-output name=commit::$(git rev-parse HEAD)"
+
+      - name: Git Push
+        run: git push origin main
