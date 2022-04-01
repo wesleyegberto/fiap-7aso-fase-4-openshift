@@ -1,5 +1,23 @@
 # Fiap - Fase 4 - Projeto de Entrega
 
+## Atividade
+
+- Etapa 1: baixe uma imagem de container, realize as modificações necessárias, adicione tag, commite e depois faça o push da imagem customizada. Bônus: Crie um dockerfile para imagem customizada.
+  - Entrega: arquivo [Dockerfile](./Dockerfile)
+- Etapa 2: faça o deploy de uma aplicação no OpenShift, adicione uma rota/ingress controller, adicione camada de persistência de dados, e realize deploy de um DB.
+  - Entregas:
+    - Rota: service e route declarados nos arquivos [ApiProdutos-Service.yml](./ApiProdutos-Service.yml) e [ApiProdutos-Route.yml](./ApiProdutos-Route.yml);
+    - Camada persistência de dados: PVC declarado no arquivo [BancoDados-Pvc.yml](./BancoDados-Pvc.yml);
+    - Deploy do BD: deployment declarado no arquivo [BancoDados-Deployment.yml](./BancoDados-Deployment.yml).
+- Etapa 3: manipule variáveis por meio de secrets, altere a aplicação e configure escalabilidade dinâmica HPA.
+  - Entregas:
+    - Secrets declarado no arquivo [BancoDados-Secret.yml](./BancoDados-Secret.yml) que são utilizados pelos deployments do BD e da API;
+    - HPA da API declarado no arquivo [ApiProdutos-Hpa.yml](./ApiProdutos-Hpa.yml).
+- Etapa 4: utilize os conceitos DevOps e GitOps e commite para um repositório público todo o código necessário para o provisionamento automatizado dos recursos que haviam sido criados de forma manual até a etapa 3.
+  - Entregas:
+    - Github Action declarado no arquivo [.github/workflows/deploy-openshift.yml](./.github/workflows/deploy-openshift.yml) para fazer o build da imagem do Docker e o push para o registry do Quay.io;
+    - Github Action declarado no arquivo [.github/workflows/deploy-resources.yml](./.github/workflows/deploy-resources.yml) para fazer o provisionamento dos recursos.
+
 ## Projeto
 
 ![](img/topologia.png)
